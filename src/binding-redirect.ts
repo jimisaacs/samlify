@@ -7,10 +7,11 @@ import type { BindingContext, Entity } from './entity';
 import type { IdentityProvider } from './entity-idp';
 import type { ServiceProvider } from './entity-sp';
 import { SamlifyError, SamlifyErrorCode } from './error';
+import type { FlowResult } from './flow';
 import libsaml, { CustomTagReplacement } from './libsaml';
-import type { RequestSignatureAlgorithm } from './types';
+import type { ParsedLogoutRequest, RequestSignatureAlgorithm } from './types';
 import { BindingNamespace, StatusCode, wording } from './urn';
-import { base64Encode, deflateString, get } from './utility';
+import { base64Encode, deflateString } from './utility';
 
 const urlParams = wording.urlParams;
 
@@ -132,13 +133,13 @@ function loginRequestRedirectURL(
 }
 /**
  * @desc Redirect URL for logout request
- * @param  {object} user                        current logged user (e.g. req.user)
- * @param  {object} entity                      object includes both idp and sp
+ * @param  {Record<string, string>} user          current logged user (e.g. req.user)
+ * @param  {object} entity                     object includes both idp and sp
  * @param  {function} customTagReplacement     used when developers have their own login response template
  * @return {string} redirect URL
  */
 function logoutRequestRedirectURL(
-	user: Record<string, any>,
+	user: Record<string, string>,
 	entity: { init: Entity; target: Entity },
 	relayState?: string,
 	customTagReplacement?: CustomTagReplacement
@@ -192,12 +193,12 @@ function logoutRequestRedirectURL(
 }
 /**
  * @desc Redirect URL for logout response
- * @param  {Record<string, unknown>|null} requescorresponding request, used to obtain the id
+ * @param  {Partial<FlowResult>|null} requescorresponding request, used to obtain the id
  * @param  {object} entity object includes both idp and sp
  * @param  {function} customTagReplacement used when developers have their own login response template
  */
 function logoutResponseRedirectURL(
-	requestInfo: Record<string, any> | null,
+	requestInfo: Partial<FlowResult<ParsedLogoutRequest>> | null,
 	entity: { init: Entity; target: Entity },
 	relayState?: string,
 	customTagReplacement?: CustomTagReplacement
@@ -218,7 +219,7 @@ function logoutResponseRedirectURL(
 		EntityID: metadata.init.getEntityID(),
 		IssueInstant: new Date().toISOString(),
 		StatusCode: StatusCode.Success,
-		InResponseTo: get(requestInfo, 'extract.logoutRequest.id', ''),
+		InResponseTo: requestInfo?.extract?.request?.id ?? '',
 	};
 
 	let rawSaml = template.context;

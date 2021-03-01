@@ -1,6 +1,6 @@
 {
-	"name": "samlify",
-	"version": "2.7.6",
+	"name": "@netflix-internal/samlify",
+	"version": "0.1.4",
 	"description": "High-level API for Single Sign On (SAML 2.0)",
 	"main": "lib/index.js",
 	"keywords": [
@@ -31,7 +31,7 @@
 	],
 	"author": "tngan",
 	"repository": {
-		"url": "https://github.com/tngan/samlify",
+		"url": "https://github.com/NetflixUI/samlify",
 		"type": "git"
 	},
 	"license": "MIT",

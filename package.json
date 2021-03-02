@@ -1,6 +1,6 @@
 {
 	"name": "@netflix-internal/samlify",
-	"version": "0.1.6",
+	"version": "0.1.7",
 	"description": "High-level API for Single Sign On (SAML 2.0)",
 	"main": "lib/index.js",
 	"keywords": [
